@@ -46,11 +46,12 @@ export default function FavoritesPage() {
 
         {favorites.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground text-lg">
-              You haven't added any movies to your favorites yet.
-            </p>
-            <p className="text-muted-foreground">
-              Browse movies and click the heart icon to add them here!
+            <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
+              You haven&apos;t added any movies to your favorites yet.
+            </h2>
+            <p className="mt-2 text-gray-500 dark:text-gray-400">
+              Browse movies and click the heart icon to add them to your
+              favorites.
             </p>
           </div>
         ) : (

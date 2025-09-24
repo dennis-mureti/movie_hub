@@ -64,7 +64,7 @@ export interface MoviesResponse {
 }
 
 class TMDBService {
-  private async fetchFromAPI(endpoint: string): Promise<any> {
+  private async fetchFromAPI<T>(endpoint: string): Promise<T> {
     try {
       const cleanEndpoint = endpoint.startsWith("/")
         ? endpoint.slice(1)

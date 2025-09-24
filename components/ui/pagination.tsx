@@ -61,7 +61,9 @@ function PaginationLink({
         className
       )}
       {...props}
-    />
+    >
+      <span className="sr-only">Page {isActive ? "current" : ""}</span>
+    </a>
   );
 }
 
