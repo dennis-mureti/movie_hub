@@ -1,32 +1,79 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { mockCredits } from "@/lib/mock-data"
+import { type NextRequest, NextResponse } from "next/server";
+import { tmdbService } from "@/lib/tmdb";
 
-const TMDB_BASE_URL = "https://api.themoviedb.org/3"
-const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY
-
-async function fetchFromTMDB(endpoint: string): Promise<any> {
-  if (!API_KEY) {
-    console.log("[v0] TMDB API key not found, using mock data for credits")
-    return mockCredits[1] // Default to first movie credits
-  }
-
-  const url = `${TMDB_BASE_URL}${endpoint}${endpoint.includes("?") ? "&" : "?"}api_key=${API_KEY}`
-
-  const response = await fetch(url)
-  if (!response.ok) {
-    throw new Error(`TMDB API error: ${response.status}`)
-  }
-
-  return await response.json()
+interface Credit {
+  id: number;
+  name: string;
+  character: string;
+  profile_path: string | null;
+  order: number;
 }
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+interface CrewMember {
+  id: number;
+  name: string;
+  job: string;
+  department: string;
+  profile_path: string | null;
+}
+
+async function fetchFromTMDB(
+  endpoint: string
+): Promise<{ cast: Credit[]; crew: CrewMember[] }> {
   try {
-    const movieId = params.id
-    const data = await fetchFromTMDB(`/movie/${movieId}/credits`)
-    return NextResponse.json(data)
+    // Validate movie ID
+    const movieId = endpoint.match(/\/movie\/(\d+)\/credits/);
+    if (!movieId || !movieId[1]) {
+      throw new Error("Invalid movie ID");
+    }
+
+    // Get the credits from TMDB service
+    const credits = await tmdbService.getMovieCredits(Number(movieId[1]));
+
+    // Map the response to our expected types
+    const cast = (credits.cast || []).map((castMember) => ({
+      id: castMember.id,
+      name: castMember.name,
+      character: castMember.character || "N/A",
+      profile_path: castMember.profile_path,
+      order: castMember.order || 0,
+    }));
+
+    const crew = (credits.crew || []).map((crewMember) => ({
+      id: crewMember.id,
+      name: crewMember.name,
+      job: crewMember.job || "N/A",
+      department: crewMember.department || "N/A",
+      profile_path: crewMember.profile_path,
+    }));
+
+    return { cast, crew };
   } catch (error) {
-    console.error("Movie credits API error:", error)
-    return NextResponse.json({ error: "Failed to fetch movie credits" }, { status: 500 })
+    console.error("Error fetching credits:", error);
+    return { cast: [], crew: [] };
+  }
+}
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const movieId = params.id;
+    if (!movieId) {
+      return NextResponse.json(
+        { error: "Movie ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const data = await fetchFromTMDB(`/movie/${movieId}/credits`);
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("Error in API route:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

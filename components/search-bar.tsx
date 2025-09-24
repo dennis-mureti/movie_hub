@@ -1,33 +1,39 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Search, X } from "lucide-react"
+import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search, X } from "lucide-react";
 
 interface SearchBarProps {
-  onSearch: (query: string) => void
-  placeholder?: string
-  initialValue?: string
+  onSearch: (query: string) => void;
+  placeholder?: string;
+  initialValue?: string;
+  className?: string;
 }
 
-export function SearchBar({ onSearch, placeholder = "Search movies...", initialValue = "" }: SearchBarProps) {
-  const [query, setQuery] = useState(initialValue)
+export function SearchBar({
+  onSearch,
+  placeholder = "Search movies...",
+  initialValue = "",
+  className = "",
+}: SearchBarProps) {
+  const [query, setQuery] = useState(initialValue);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      onSearch(query)
-    }, 300)
+      onSearch(query);
+    }, 300);
 
-    return () => clearTimeout(timeoutId)
-  }, [query, onSearch])
+    return () => clearTimeout(timeoutId);
+  }, [query, onSearch]);
 
   const handleClear = () => {
-    setQuery("")
-  }
+    setQuery("");
+  };
 
   return (
-    <div className="relative max-w-md mx-auto">
+    <div className={`relative max-w-md mx-auto ${className}`}>
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
         <Input
@@ -49,5 +55,5 @@ export function SearchBar({ onSearch, placeholder = "Search movies...", initialV
         )}
       </div>
     </div>
-  )
+  );
 }
