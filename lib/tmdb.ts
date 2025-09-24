@@ -70,7 +70,7 @@ class TMDBService {
         ? endpoint.slice(1)
         : endpoint;
       const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
-      console.log("API Key:", apiKey ? "Found" : "Not Found key");
+      console.log("API Key:", apiKey ? "Found" : "Not Found");
 
       if (!apiKey) {
         throw new Error(
