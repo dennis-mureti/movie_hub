@@ -9,7 +9,7 @@ on:
 # Environment variables
 env:
   NODE_VERSION: "20.x"
-  PNPM_VERSION: "8.x"
+  PNPM_VERSION: "8.15.1"
 
 jobs:
   lint-and-test:
@@ -20,14 +20,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4.1.1
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        id: pnpm-setup
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: true
+
       - name: Setup Node.js
         uses: actions/setup-node@v4.0.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
 
-      - name: Install pnpm
-        run: npm install -g pnpm@${{ env.PNPM_VERSION }}
+      - name: Print pnpm version
+        run: pnpm --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -50,14 +57,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4.1.1
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: true
+
       - name: Setup Node.js
         uses: actions/setup-node@v4.0.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
-
-      - name: Install pnpm
-        run: npm install -g pnpm@${{ env.PNPM_VERSION }}
 
       - name: Install Vercel CLI
         run: pnpm add -g vercel@latest
