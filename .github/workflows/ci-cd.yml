@@ -26,11 +26,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
 
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Install pnpm using Corepack
-        run: corepack prepare pnpm@${{ env.PNPM_VERSION }} --activate
+      - name: Install pnpm
+        run: npm install -g pnpm@${{ env.PNPM_VERSION }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -59,11 +56,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
 
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Install pnpm using Corepack
-        run: corepack prepare pnpm@${{ env.PNPM_VERSION }} --activate
+      - name: Install pnpm
+        run: npm install -g pnpm@${{ env.PNPM_VERSION }}
 
       - name: Install Vercel CLI
         run: pnpm add -g vercel@latest
